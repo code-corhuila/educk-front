@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
+import MicrofrontendViewer from './components/MicrofrontendViewer';
 
 const MODULES = [
   { id: 'auth', name: 'Autenticación & Usuarios', port: 3001, color: '#1e3a8a', desc: 'IAM (HU-003)' },
@@ -14,6 +15,7 @@ export default function App() {
   
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
+  const [activeUrl, setActiveUrl] = useState('http://localhost:3002');
 
   useEffect(() => {
     const token = localStorage.getItem('edutrack_token');
@@ -45,7 +47,7 @@ export default function App() {
       <Navbar user={user} onLogout={handleLogout} />
       
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
-        <Sidebar user={user} />
+        <Sidebar user={user} setActiveUrl={setActiveUrl} />
         
         <main style={{ flex: 1, display: 'flex', flexDirection: 'column', background: '#f8fafc' }}>
           <header style={{ height: 60, background: '#fff', borderBottom: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px' }}>
@@ -74,12 +76,8 @@ export default function App() {
             ))}
           </div>
 
-          <div style={{ flex: 1, padding: 20 }}>
-            <iframe 
-              src={`http://localhost:${activeModule.port}`} 
-              style={{ width: '100%', height: '100%', border: 'none', borderRadius: 8, background: '#fff', boxShadow: '0 1px 4px rgba(0,0,0,0.05)' }}
-              title={activeModule.name}
-            />
+          <div style={{ flex: 1, padding: 20, display: 'flex' }}>
+            <MicrofrontendViewer moduleUrl={activeUrl} />
           </div>
         </main>
       </div>
