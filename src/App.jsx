@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Navbar from './components/Navbar';
 
 const MODULES = [
   { id: 'auth', name: 'Autenticación & Usuarios', port: 3001, color: '#1e3a8a', desc: 'IAM (HU-003)' },
@@ -7,8 +8,21 @@ const MODULES = [
   { id: 'comms', name: 'Mensajería Institucional', port: 3005, color: '#7c3aed', desc: 'Comunicación Padre-Profesor (HU-004)' }
 ];
 
+const MOCK_DOCENTE = {
+  id: 'usr-001',
+  nombre: 'Ximena Del Pilar Zambrano',
+  rol: 'DOCENTE',
+  email: 'ximena.zambrano@edutrack.edu.co'
+};
+
 export default function App() {
   const [activeModule, setActiveModule] = useState(MODULES[0]);
+  const [user, setUser] = useState(MOCK_DOCENTE);
+
+  const handleLogout = () => {
+    console.log('Sesión cerrada desde el Frontend Shell');
+    setUser(null);
+  };
 
   return (
     <div style={{ display: 'flex', height: '100vh', fontFamily: 'sans-serif' }}>
@@ -47,12 +61,12 @@ export default function App() {
 
       {/* Main Content Container */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: '#f8fafc' }}>
-        <header style={{ height: 60, background: '#fff', borderBottom: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px' }}>
-          <span style={{ fontWeight: 'bold', color: '#1e293b' }}>{activeModule.name}</span>
-          <span style={{ fontSize: 12, background: '#e0f2fe', color: '#0369a1', padding: '4px 10px', borderRadius: 12 }}>
-            Puerto Módulo: http://localhost:{activeModule.port}
-          </span>
-        </header>
+        <Navbar 
+          title={activeModule.name} 
+          activePort={activeModule.port} 
+          user={user} 
+          onLogout={handleLogout} 
+        />
         
         <div style={{ flex: 1, padding: 20 }}>
           <iframe 
