@@ -1,0 +1,38 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  /* ==============================================================
+     SISTEMA DE DISEÑO EDUTRACK - EXTRAÍDO DEL MVP (FIGMA)
+     ============================================================== */
+     
+  /* Colores Principales (Brand) */
+  --edutrack-primary-teal: #00C4A7;     /* Usado en el logo y acentos principales */
+  --edutrack-primary-blue: #29B6F6;     /* Gradiente secundario (círculo derecho) */
+  
+  /* Fondos y Paneles */
+  --edutrack-bg-dark: #1E3A8A;          /* Panel derecho oscuro y botones (Dark Blue) */
+  --edutrack-bg-slate: #1E293B;         /* Alternativa de sidebar oscuro (Slate 800) */
+  --edutrack-bg-light: #FFFFFF;         /* Fondo izquierdo y tarjetas */
+  --edutrack-bg-muted: #F8FAFC;         /* Fondos secundarios de main content */
+
+  /* Tipografía y Texto */
+  --edutrack-text-main: #0F172A;        /* Títulos pesados (Slate 900) */
+  --edutrack-text-muted: #64748B;       /* Subtítulos y descripciones (Slate 500) */
+  
+  /* Tipografía Principal */
+  --font-family-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-family-sans);
+  background-color: var(--edutrack-bg-light);
+  color: var(--edutrack-text-main);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
