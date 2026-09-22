@@ -99,11 +99,11 @@ export default function Navbar({
     }}>
       {/* Sección Izquierda: Branding, Módulo y Puerto */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontFamily: "'Segoe UI', sans-serif" }}>
-          <span style={{ fontSize: 20, fontWeight: 800, color: '#263F70', letterSpacing: '-0.5px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span style={{ fontSize: 18, fontWeight: 800, color: '#0284c7', letterSpacing: '-0.5px' }}>
             EduTrack
           </span>
-          <span style={{ fontSize: 12, fontWeight: 700, color: '#14B8A6', textTransform: 'uppercase', letterSpacing: '1.2px' }}>
+          <span style={{ fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
             Shell
           </span>
         </div>
@@ -111,7 +111,7 @@ export default function Navbar({
         <div style={{ height: 20, width: 1, background: '#cbd5e1' }} />
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <span style={{ fontWeight: 700, color: '#263F70', fontSize: 15 }}>
+          <span style={{ fontWeight: 600, color: '#1e293b', fontSize: 14 }}>
             {title}
           </span>
           <span style={{
@@ -150,9 +150,9 @@ export default function Navbar({
             type="button"
             onClick={() => setShowMenu(!showMenu)}
             style={{
-              background: '#14B8A6',
+              background: '#0ea5e9',
               color: '#ffffff',
-              border: '2px solid #E2E8F0',
+              border: '2px solid #e0f2fe',
               borderRadius: '50%',
               width: 38,
               height: 38,
