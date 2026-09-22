@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
 
@@ -12,15 +12,33 @@ const MODULES = [
 export default function App() {
   const [activeModule, setActiveModule] = useState(MODULES[0]);
   
-  const [user, setUser] = useState({
-    nombre: 'Ximena Del Pilar Zambrano',
-    rol: 'DOCENTE',
-    email: 'ximena.zambrano@edutrack.edu.co'
-  });
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem('edutrack_token');
+    if (!token) {
+      window.location.href = 'http://localhost:3001';
+      return;
+    }
+    
+    try {
+      const savedUser = localStorage.getItem('edutrack_user');
+      if (savedUser) {
+        setUser(JSON.parse(savedUser));
+      }
+    } catch (err) {}
+    
+    setIsAuthenticated(true);
+  }, []);
 
   const handleLogout = () => {
-    setUser(null);
+    localStorage.removeItem('edutrack_token');
+    localStorage.removeItem('edutrack_user');
+    window.location.href = 'http://localhost:3001';
   };
+
+  if (!isAuthenticated) return null;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', fontFamily: 'sans-serif' }}>
