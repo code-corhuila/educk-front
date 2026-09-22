@@ -25,11 +25,11 @@ export default function App() {
   };
 
   return (
-    <div style={{ display: 'flex', height: '100vh', fontFamily: 'sans-serif' }}>
+    <div style={{ display: 'flex', height: '100vh', fontFamily: "'Segoe UI', sans-serif", background: '#F8F9FA' }}>
       {/* Sidebar */}
-      <div style={{ width: 280, background: '#0f172a', color: '#fff', padding: 20, display: 'flex', flexDirection: 'column' }}>
-        <h2 style={{ fontSize: 18, color: '#38bdf8', marginBottom: 4 }}>EduTrack Platform</h2>
-        <span style={{ fontSize: 11, color: '#94a3b8', marginBottom: 24 }}>Universidad CORHUILA — Corte 2</span>
+      <div style={{ width: 280, background: '#FFFFFF', color: '#263F70', padding: 20, display: 'flex', flexDirection: 'column', boxShadow: '2px 0 10px rgba(32, 48, 74, 0.05)', zIndex: 10 }}>
+        <h2 style={{ fontSize: 24, fontWeight: 'bold', color: '#263F70', marginBottom: 4 }}>EduTrack</h2>
+        <span style={{ fontSize: 12, fontWeight: 600, color: '#14B8A6', marginBottom: 24, letterSpacing: '1.8px', textTransform: 'uppercase' }}>CORHUILA — G1</span>
         
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8, flex: 1 }}>
           {MODULES.map(m => (
@@ -38,24 +38,27 @@ export default function App() {
               onClick={() => setActiveModule(m)}
               style={{
                 textAlign: 'left',
-                padding: '12px 14px',
-                borderRadius: 6,
+                padding: '14px 16px',
+                borderRadius: 12,
                 border: 'none',
-                background: activeModule.id === m.id ? '#1e293b' : 'transparent',
-                color: activeModule.id === m.id ? '#38bdf8' : '#cbd5e1',
-                fontWeight: activeModule.id === m.id ? 'bold' : 'normal',
+                background: activeModule.id === m.id ? 'rgba(20, 184, 166, 0.1)' : 'transparent',
+                color: activeModule.id === m.id ? '#14B8A6' : '#64748b',
+                fontWeight: activeModule.id === m.id ? 'bold' : '600',
                 cursor: 'pointer',
-                borderLeft: activeModule.id === m.id ? '4px solid #38bdf8' : '4px solid transparent'
+                borderLeft: activeModule.id === m.id ? '4px solid #14B8A6' : '4px solid transparent',
+                transition: 'all 0.2s ease',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 4
               }}
             >
-              <div>{m.name}</div>
-              <div style={{ fontSize: 11, color: '#64748b' }}>{m.desc} (:{m.port})</div>
+              <div style={{ fontSize: 14 }}>{m.name}</div>
             </button>
           ))}
         </div>
         
-        <div style={{ borderTop: '1px solid #334155', paddingTop: 12, fontSize: 11, color: '#64748b' }}>
-          Líder Técnica: @XimenaChala
+        <div style={{ borderTop: '1px solid #E2E8F0', paddingTop: 16, fontSize: 12, color: '#94a3b8', fontWeight: 500 }}>
+          Desarrolladora: @XimenaChala
         </div>
       </div>
 
@@ -68,10 +71,10 @@ export default function App() {
           onLogout={handleLogout} 
         />
         
-        <div style={{ flex: 1, padding: 20 }}>
+        <div style={{ flex: 1, padding: '32px' }}>
           <iframe 
             src={`http://localhost:${activeModule.port}`} 
-            style={{ width: '100%', height: '100%', border: 'none', borderRadius: 8, background: '#fff', boxShadow: '0 1px 4px rgba(0,0,0,0.05)' }}
+            style={{ width: '100%', height: '100%', border: 'none', borderRadius: 18, background: '#FFFFFF', boxShadow: '0px 24px 70px rgba(32, 48, 74, 0.15)' }}
             title={activeModule.name}
           />
         </div>
