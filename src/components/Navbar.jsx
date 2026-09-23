@@ -1,17 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
 
 /**
- * Navbar.jsx - Barra de Navegación Superior Institucional (Frontend Shell)
+ * Navbar.jsx - Institutional Top Navigation Bar (Frontend Shell)
  * EduTrack — Sistemas Distribuidos 2026-B
- * Arquitectura: Microfrontend Host Shell (ADR-006 en puerto :3000)
+ * Architecture: Microfrontend Host Shell (ADR-006 on port :3000)
  */
 
 const ROLE_STYLES = {
-  DOCENTE:    { bg: '#fef3c7', text: '#92400e', border: '#fde68a', label: 'Docente' },
-  ADMIN:      { bg: '#f3e8ff', text: '#6b21a8', border: '#e9d5ff', label: 'Directivo / Admin' },
-  DIRECTIVO:  { bg: '#f3e8ff', text: '#6b21a8', border: '#e9d5ff', label: 'Directivo' },
-  ESTUDIANTE: { bg: '#dcfce7', text: '#15803d', border: '#bbf7d0', label: 'Estudiante' },
-  ACUDIENTE:  { bg: '#e0e7ff', text: '#3730a3', border: '#c7d2fe', label: 'Acudiente' }
+  DOCENTE:    { bg: 'bg-amber-100', text: 'text-amber-900', border: 'border-amber-200', label: 'Docente' },
+  ADMIN:      { bg: 'bg-purple-100', text: 'text-purple-900', border: 'border-purple-200', label: 'Directivo / Admin' },
+  DIRECTIVO:  { bg: 'bg-purple-100', text: 'text-purple-900', border: 'border-purple-200', label: 'Directivo' },
+  ESTUDIANTE: { bg: 'bg-green-100', text: 'text-green-800', border: 'border-green-200', label: 'Estudiante' },
+  ACUDIENTE:  { bg: 'bg-indigo-100', text: 'text-indigo-900', border: 'border-indigo-200', label: 'Acudiente' }
 };
 
 export default function Navbar({ 
@@ -23,7 +23,7 @@ export default function Navbar({
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef(null);
 
-  // Usuario activo con valores defensivos por defecto
+  // Active user with fallback default values
   const currentUser = user || (() => {
     try {
       const saved = localStorage.getItem('edutrack_user');
@@ -32,12 +32,12 @@ export default function Navbar({
       return null;
     }
   })() || {
-    nombre: 'Ximena Del Pilar Zambrano',
-    rol: 'DOCENTE',
+    name: 'Ximena Del Pilar Zambrano',
+    role: 'DOCENTE',
     email: 'ximena.zambrano@edutrack.edu.co'
   };
 
-  // Cálculo de iniciales del avatar
+  // Avatar initials calculation
   const getInitials = (name) => {
     if (!name) return 'ED';
     const parts = name.trim().split(/\s+/);
@@ -45,16 +45,17 @@ export default function Navbar({
     return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
   };
 
-  // Estilos del rol dinámico (RBAC)
-  const roleKey = (currentUser.rol || 'DOCENTE').toUpperCase();
+  // Dynamic RBAC role styles
+  const userRole = currentUser.rol || currentUser.role || 'DOCENTE';
+  const roleKey = userRole.toUpperCase();
   const roleConfig = ROLE_STYLES[roleKey] || {
-    bg: '#f1f5f9',
-    text: '#475569',
-    border: '#cbd5e1',
-    label: currentUser.rol || 'Usuario'
+    bg: 'bg-slate-100',
+    text: 'text-slate-600',
+    border: 'border-slate-300',
+    label: userRole || 'Usuario'
   };
 
-  // Cerrar menú al hacer clic fuera
+  // Close menu on outside click
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (menuRef.current && !menuRef.current.contains(e.target)) {
@@ -67,14 +68,14 @@ export default function Navbar({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showMenu]);
 
-  // Rutina de cierre de sesión seguro
+  // Secure logout routine
   const handleLogout = () => {
     setShowMenu(false);
     try {
       localStorage.removeItem('edutrack_token');
       localStorage.removeItem('edutrack_user');
     } catch (err) {
-      console.error('Error al limpiar sesión local:', err);
+      console.error('Failed to clear local session:', err);
     }
 
     if (typeof onLogout === 'function') {
@@ -85,147 +86,76 @@ export default function Navbar({
   };
 
   return (
-    <header style={{
-      height: 64,
-      background: '#ffffff',
-      borderBottom: '1px solid #e2e8f0',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      padding: '0 24px',
-      boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
-      position: 'relative',
-      zIndex: 20
-    }}>
-      {/* Sección Izquierda: Branding, Módulo y Puerto */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{ fontSize: 18, fontWeight: 800, color: 'var(--edutrack-text-main)', letterSpacing: '-0.5px' }}>Edu<span style={{ color: 'var(--edutrack-primary-teal)' }}>Track</span></span>
-          <span style={{ fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+    <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-6 shadow-sm relative z-20">
+      
+      {/* Left Section: Branding, Module, and Port */}
+      <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2">
+          <span className="text-lg font-extrabold text-slate-900 tracking-tight">
+            Edu<span className="text-teal-500">Track</span>
+          </span>
+          <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wide">
             Shell
           </span>
         </div>
 
-        <div style={{ height: 20, width: 1, background: '#cbd5e1' }} />
+        <div className="h-5 w-px bg-slate-300" />
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <span style={{ fontWeight: 600, color: '#1e293b', fontSize: 14 }}>
+        <div className="flex items-center gap-3">
+          <span className="font-semibold text-slate-800 text-sm">
             {title}
           </span>
-          <span style={{
-            fontSize: 12,
-            background: '#e0f2fe',
-            color: '#0369a1',
-            padding: '3px 10px',
-            borderRadius: 12,
-            fontWeight: 500,
-            border: '1px solid #bae6fd'
-          }}>
+          <span className="text-xs bg-sky-100 text-sky-700 px-3 py-1 rounded-full font-medium border border-sky-200">
             Módulo Activo: http://localhost:{activePort}
           </span>
         </div>
       </div>
 
-      {/* Sección Derecha: Control de Acceso RBAC & Menú de Perfil */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }} ref={menuRef}>
-        {/* Badge de Rol Dinámico */}
-        <div style={{
-          fontSize: 12,
-          background: roleConfig.bg,
-          color: roleConfig.text,
-          border: `1px solid ${roleConfig.border}`,
-          padding: '4px 12px',
-          borderRadius: 16,
-          fontWeight: 700,
-          letterSpacing: '0.2px'
-        }}>
+      {/* Right Section: RBAC Access Control & Profile Menu */}
+      <div className="flex items-center gap-4" ref={menuRef}>
+        
+        {/* Dynamic Role Badge */}
+        <div className={`text-xs px-3 py-1 rounded-full font-bold tracking-wide border ${roleConfig.bg} ${roleConfig.text} ${roleConfig.border}`}>
           Rol: {roleConfig.label}
         </div>
 
-        {/* Botón de Avatar con Iniciales */}
-        <div style={{ position: 'relative' }}>
+        {/* Avatar Button with Initials */}
+        <div className="relative">
           <button
             type="button"
             onClick={() => setShowMenu(!showMenu)}
-            style={{
-              background: '#0ea5e9',
-              color: '#ffffff',
-              border: '2px solid #e0f2fe',
-              borderRadius: '50%',
-              width: 38,
-              height: 38,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              fontWeight: 700,
-              fontSize: 13,
-              boxShadow: '0 1px 2px rgba(0,0,0,0.1)',
-              transition: 'all 0.2s ease'
-            }}
-            title={currentUser.nombre}
+            className="bg-sky-500 text-white border-2 border-sky-100 rounded-full w-10 h-10 flex items-center justify-center cursor-pointer font-bold text-sm shadow-sm transition-all hover:bg-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-400 focus:ring-offset-1"
+            title={currentUser.name || currentUser.nombre}
           >
-            {getInitials(currentUser.nombre)}
+            {getInitials(currentUser.name || currentUser.nombre)}
           </button>
 
-          {/* Menú Flotante Desplegable */}
+          {/* Dropdown Menu */}
           {showMenu && (
-            <div style={{
-              position: 'absolute',
-              top: '100%',
-              right: 0,
-              marginTop: 8,
-              background: '#ffffff',
-              border: '1px solid #e2e8f0',
-              borderRadius: 8,
-              boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05)',
-              width: 230,
-              zIndex: 50,
-              overflow: 'hidden'
-            }}>
-              <div style={{ padding: '12px 16px', background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
-                <div style={{ fontSize: 13, fontWeight: 700, color: '#0f172a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                  {currentUser.nombre}
+            <div className="absolute top-full right-0 mt-2 bg-white border border-slate-200 rounded-lg shadow-lg w-56 z-50 overflow-hidden">
+              <div className="px-4 py-3 bg-slate-50 border-b border-slate-200">
+                <div className="text-sm font-bold text-slate-900 truncate">
+                  {currentUser.name || currentUser.nombre}
                 </div>
-                <div style={{ fontSize: 11, color: '#64748b', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                <div className="text-xs text-slate-500 truncate">
                   {currentUser.email}
                 </div>
               </div>
 
-              <div style={{ padding: '6px 0' }}>
-                <div style={{
-                  padding: '8px 16px',
-                  fontSize: 12,
-                  color: '#334155',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 8
-                }}>
+              <div className="py-1">
+                <button
+                  type="button"
+                  className="w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-100 flex items-center gap-2 cursor-pointer font-medium focus:outline-none"
+                >
                   👤 Mi Perfil Institucional
-                </div>
+                </button>
 
-                <div style={{ height: 1, background: '#f1f5f9', margin: '4px 0' }} />
+                <div className="h-px bg-slate-100 my-1" />
 
                 <button
                   type="button"
                   onClick={handleLogout}
-                  style={{
-                    width: '100%',
-                    padding: '8px 16px',
-                    background: 'transparent',
-                    border: 'none',
-                    textAlign: 'left',
-                    cursor: 'pointer',
-                    color: '#ef4444',
-                    fontSize: 12,
-                    fontWeight: 600,
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 8
-                  }}
-                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#fef2f2'}
-                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                  className="w-full text-left px-4 py-2 text-xs text-red-500 font-semibold hover:bg-red-50 flex items-center gap-2 cursor-pointer focus:outline-none"
                 >
                   🚪 Cerrar Sesión
                 </button>
