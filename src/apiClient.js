@@ -1,18 +1,20 @@
 // apiClient.js
 // Shared session and HTTP client for all EduTrack portals
 
-let memorySession = null;
+const SESSION_KEY = 'edutrack_session';
 
 export const setSession = (token, user) => {
-  memorySession = { token, user };
+  const sessionData = { token, user };
+  localStorage.setItem(SESSION_KEY, JSON.stringify(sessionData));
 };
 
 export const getSession = () => {
-  return memorySession;
+  const data = localStorage.getItem(SESSION_KEY);
+  return data ? JSON.parse(data) : null;
 };
 
 export const clearSession = () => {
-  memorySession = null;
+  localStorage.removeItem(SESSION_KEY);
 };
 
 /**
@@ -20,11 +22,19 @@ export const clearSession = () => {
  */
 export const apiFetch = async (url, options = {}) => {
   const headers = new Headers(options.headers || {});
-  if (memorySession?.token) {
-    headers.set('Authorization', `Bearer ${memorySession.token}`);
+  const session = getSession();
+  
+  if (session?.token) {
+    headers.set('Authorization', `Bearer ${session.token}`);
   }
   
   const response = await fetch(url, { ...options, headers });
+  
+  if (response.status === 401 || response.status === 403) {
+    clearSession();
+    window.location.href = '/login';
+  }
+  
   return response;
 };
 

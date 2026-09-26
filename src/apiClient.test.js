@@ -3,6 +3,12 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 
 describe('Shared Session Module', () => {
   beforeEach(() => {
+    const store = {};
+    global.localStorage = {
+      getItem: vi.fn(key => store[key] || null),
+      setItem: vi.fn((key, value) => { store[key] = value.toString(); }),
+      removeItem: vi.fn(key => { delete store[key]; })
+    };
     clearSession();
     global.fetch = vi.fn();
   });
@@ -24,7 +30,7 @@ describe('Shared Session Module', () => {
 
     try {
       await loginWithApi('test@test.com', 'pass', 'http://gateway');
-      fail('Should have thrown an error');
+      expect.fail('Should have thrown an error');
     } catch (error) {
       expect(error.status).toBe(401);
       expect(error.message).toBe('Invalid credentials');
@@ -43,5 +49,19 @@ describe('Shared Session Module', () => {
     
     const passedHeaders = global.fetch.mock.calls[0][1].headers;
     expect(passedHeaders.get('Authorization')).toBe('Bearer secret_token');
+  });
+
+  it('apiFetch should not attach Authorization header when session does not exist', async () => {
+    global.fetch.mockResolvedValueOnce({ ok: true, status: 200 });
+    clearSession();
+    
+    await apiFetch('http://api/test');
+    
+    expect(global.fetch).toHaveBeenCalledWith('http://api/test', expect.objectContaining({
+      headers: expect.any(Headers)
+    }));
+    
+    const passedHeaders = global.fetch.mock.calls[0][1].headers;
+    expect(passedHeaders.has('Authorization')).toBe(false);
   });
 });
