@@ -86,10 +86,10 @@ export default function Navbar({
   };
 
   return (
-    <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-6 shadow-sm relative z-20">
+    <header className="shell-navbar h-16 bg-white border-b border-slate-200 flex items-center justify-between px-6 shadow-sm relative z-20">
       
       {/* Left Section: Branding, Module, and Port */}
-      <div className="flex items-center gap-4">
+      <div className="shell-navbar__context flex items-center gap-4">
         <div className="flex items-center gap-2">
           <span className="text-lg font-extrabold text-slate-900 tracking-tight">
             Edu<span className="text-teal-500">Track</span>
@@ -115,7 +115,7 @@ export default function Navbar({
       <div className="flex items-center gap-4" ref={menuRef}>
         
         {/* Dynamic Role Badge */}
-        <div className={`text-xs px-3 py-1 rounded-full font-bold tracking-wide border ${roleConfig.bg} ${roleConfig.text} ${roleConfig.border}`}>
+        <div className={`shell-navbar__role text-xs px-3 py-1 rounded-full font-bold tracking-wide border ${roleConfig.bg} ${roleConfig.text} ${roleConfig.border}`}>
           Rol: {roleConfig.label}
         </div>
 

@@ -1,13 +1,12 @@
 import React from 'react';
 
-export default function MicrofrontendViewer({ moduleUrl }) {
+export default function MicrofrontendViewer({ portal }) {
   return (
-    <iframe 
-      src={moduleUrl}
-      width="100%"
-      height="100%"
-      style={{ border: 'none', flexGrow: 1 }}
-      title="Visor de Microfrontend"
+    <iframe
+      className="shell-portal-frame"
+      src={portal.url}
+      title={`Portal ${portal.name}`}
+      loading="eager"
     />
   );
 }

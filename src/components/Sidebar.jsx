@@ -1,43 +1,41 @@
 import React from 'react';
-import { LayoutDashboard, Users, BookOpen, Calendar, CheckSquare } from 'lucide-react';
+import { BookOpen, CalendarCheck, MessageSquare, Users } from 'lucide-react';
+import { PORTAL_MODULES } from '../portalModules';
 
-export default function Sidebar({ user, setActiveUrl }) {
-  const role = user?.rol?.toUpperCase() || 'ESTUDIANTE';
-  
-  const adminLinks = [
-    { name: 'Dashboard', icon: <LayoutDashboard size={18} />, url: 'http://localhost:3002' },
-    { name: 'Gestión de Usuarios', icon: <Users size={18} />, url: 'http://localhost:3001' },
-    { name: 'Auditoría', icon: <CheckSquare size={18} />, url: 'http://localhost:3001/audit' }
-  ];
+const PORTAL_ICONS = {
+  identity: Users,
+  academic: BookOpen,
+  attendance: CalendarCheck,
+  communication: MessageSquare
+};
 
-  const academicLinks = [
-    { name: 'Mis Cursos', icon: <BookOpen size={18} />, url: 'http://localhost:3002' },
-    { name: 'Calificaciones', icon: <CheckSquare size={18} />, url: 'http://localhost:3002/grades' },
-    { name: 'Calendario', icon: <Calendar size={18} />, url: 'http://localhost:3002/calendar' }
-  ];
-
-  const links = ['DIRECTIVO', 'ADMIN'].includes(role) 
-    ? adminLinks 
-    : academicLinks;
-
+export default function Sidebar({ activePortalId, onSelectPortal }) {
   return (
-    <aside style={{ width: 250, height: 'calc(100vh - 64px)', background: 'var(--edutrack-bg-slate)', borderRight: '1px solid #334155', color: '#fff', display: 'flex', flexDirection: 'column' }}>
-      <div style={{ padding: '20px 0', flex: 1 }}>
-        <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-          {links.map((link, i) => (
-            <li 
-              key={i} 
-              onClick={(e) => { e.preventDefault(); setActiveUrl(link.url); }}
-              style={{ padding: '12px 24px', display: 'flex', alignItems: 'center', gap: 12, cursor: 'pointer', transition: 'background 0.2s' }}
-              onMouseEnter={(e) => { e.currentTarget.style.background = '#334155'; e.currentTarget.style.color = 'var(--edutrack-primary-teal)'; }}
-              onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'inherit'; }}
-            >
-              {link.icon}
-              <span style={{ fontSize: 14 }}>{link.name}</span>
+    <aside className="shell-sidebar" aria-label="Portales de EduTrack">
+      <p className="shell-sidebar__label">Portales</p>
+      <ul className="shell-sidebar__list">
+        {PORTAL_MODULES.map((portal) => {
+          const Icon = PORTAL_ICONS[portal.id];
+          const isActive = activePortalId === portal.id;
+
+          return (
+            <li key={portal.id}>
+              <button
+                type="button"
+                className={`shell-sidebar__button${isActive ? ' is-active' : ''}`}
+                aria-current={isActive ? 'page' : undefined}
+                onClick={() => onSelectPortal(portal.id)}
+              >
+                <Icon aria-hidden="true" size={20} />
+                <span>
+                  <strong>{portal.name}</strong>
+                  <small>{portal.description}</small>
+                </span>
+              </button>
             </li>
-          ))}
-        </ul>
-      </div>
+          );
+        })}
+      </ul>
     </aside>
   );
 }
