@@ -3,6 +3,10 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
+  "main": "src/apiClient.js",
+  "exports": {
+    ".": "./src/apiClient.js"
+  },
   "scripts": {
     "dev": "vite --port 3000 --host",
     "build": "vite build",

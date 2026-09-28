@@ -1,9 +1,34 @@
+# ============================================================
+# SECURITY-HARDENING: self-hosted runner (mitigaciones aplicadas)
+# ============================================================
+# Motivo: la org code-corhuila agoto los minutos gratuitos de GitHub
+# Actions y tiene factura pendiente que bloquea los runners hospedados.
+#
+# Mitigaciones aplicadas:
+#  - Se elimino 'on: pull_request'. El job YA NO se ejecuta en PRs de
+#    terceros, evitando el patron inseguro 'self-hosted + PR code'.
+#  - El workflow corre solo por workflow_dispatch o por cron cada 6h.
+#  - Path de Python validado con Test-Path antes de usar (fallo rapido).
+#  - Los tokens se leen de secrets y se filtran en logs (RedactTokensFilter).
+#
+# Riesgos aceptados (documentados para defensa oral):
+#  - Persistencia: la PC no es efimera; hay tokens entre corridas.
+#  - SPOF: si la PC se apaga, los jobs quedan en cola hasta que vuelva.
+# ============================================================
+# SELF-HOSTED JUSTIFICATION:
+# La organizacion code-corhuila agoto los minutos gratuitos de GitHub Actions
+# y tiene una factura pendiente que bloquea los runners hospedados.
+# Este workflow usa un runner self-hosted para no depender del billing.
+# La accion actions/setup-python@v5 falla en Windows self-hosted por un bug conocido
+# de tool-cache, por eso se usa $env:LOCALAPPDATA + GITHUB_PATH.
 name: Cloud Guardian 24/7 (EduTrack Quality Gates)
 
 on:
-  pull_request:
-    types: [opened, synchronize, reopened]
-  workflow_dispatch:        # Manual trigger in GitHub web
+  # SECURITY: PR trigger removed. Running untrusted PR code on a self-hosted
+  # runner is a known escalation path (GitHub warns against it).
+  workflow_dispatch:
+  schedule:
+    - cron: '0 */6 * * *'   # cada 6 horas        # Manual trigger in GitHub web
 
 permissions:
   pull-requests: write
@@ -13,17 +38,26 @@ permissions:
 jobs:
   audit-and-sync-24-7:
     name: Quality Gates Audit, Trello & Notification Dispatch
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, windows]
     steps:
       - name: Checkout Full Repository History
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Setup Python 3.12 Runtime
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
+
+      - name: Add Python to PATH
+        shell: powershell
+        run: |
+          $pyRoot = "C:\Python312"
+          if (-not (Test-Path "$pyRoot\python.exe")) {
+            Write-Error "Python 3.12 not found at $pyRoot"
+            exit 1
+          }
+          $pyRoot | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          "$pyRoot\Scripts" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          Write-Host "Python added to PATH: $pyRoot"
+          & "$pyRoot\python.exe" --version
 
       - name: Install Runtime Dependencies
         run: |
@@ -40,8 +74,8 @@ jobs:
           TRELLO_TOKEN: ${{ secrets.TRELLO_TOKEN }}
           TRELLO_BOARD_ID: ${{ secrets.TRELLO_BOARD_ID || '6aaef11b808b8de50ad9237e' }}
         run: |
-          if [ -f ".github/scripts/centinela_cloud.py" ]; then
+          if (Test-Path ".github/scripts/centinela_cloud.py") {
             python .github/scripts/centinela_cloud.py
-          else
-            echo "Notice: Script not found in .github/scripts/centinela_cloud.py."
-          fi
+          } else {
+            Write-Host "Notice: Script not found in .github/scripts/centinela_cloud.py."
+          }
