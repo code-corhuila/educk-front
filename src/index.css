@@ -40,3 +40,163 @@ body {
 * {
   box-sizing: border-box;
 }
+
+.shell-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.shell-workspace {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.shell-sidebar {
+  width: 260px;
+  padding: 24px 12px;
+  color: #fff;
+  background: #0f172a;
+  border-right: 1px solid #334155;
+}
+
+.shell-sidebar__label {
+  margin: 0 12px 12px;
+  color: #94a3b8;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.shell-sidebar__list {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.shell-sidebar__button {
+  display: flex;
+  width: 100%;
+  gap: 12px;
+  align-items: center;
+  padding: 12px;
+  color: #cbd5e1;
+  text-align: left;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
+}
+
+.shell-sidebar__button:hover,
+.shell-sidebar__button:focus-visible {
+  color: #fff;
+  background: #1e293b;
+  outline: none;
+}
+
+.shell-sidebar__button:focus-visible {
+  box-shadow: 0 0 0 3px #60a5fa;
+}
+
+.shell-sidebar__button.is-active {
+  color: #fff;
+  background: #1d4ed8;
+  border-color: #60a5fa;
+}
+
+.shell-sidebar__button span {
+  display: grid;
+  gap: 2px;
+}
+
+.shell-sidebar__button small {
+  color: inherit;
+  font-size: 0.7rem;
+  opacity: 0.78;
+}
+
+.shell-main {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  padding: 16px;
+  background: #f8fafc;
+}
+
+.shell-portal-frame {
+  width: 100%;
+  min-height: calc(100vh - 96px);
+  flex: 1;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+}
+
+@media (max-width: 768px) {
+  .shell-navbar {
+    padding-inline: 12px;
+  }
+
+  .shell-navbar__context {
+    gap: 8px;
+  }
+
+  .shell-navbar__role {
+    display: none;
+  }
+
+  .shell-workspace {
+    flex-direction: column;
+    overflow: auto;
+  }
+
+  .shell-sidebar {
+    width: 100%;
+    padding: 10px;
+    border-right: 0;
+  }
+
+  .shell-sidebar__label,
+  .shell-sidebar__button small {
+    display: none;
+  }
+
+  .shell-sidebar__list {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .shell-sidebar__button {
+    justify-content: center;
+    padding: 10px 6px;
+    text-align: center;
+  }
+
+  .shell-main {
+    min-height: calc(100vh - 144px);
+    padding: 8px;
+  }
+
+  .shell-portal-frame {
+    min-height: calc(100vh - 160px);
+    border-radius: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .shell-navbar__context > div:last-child span:last-child {
+    display: none;
+  }
+
+  .shell-sidebar__button {
+    gap: 4px;
+    flex-direction: column;
+    font-size: 0.72rem;
+  }
+}

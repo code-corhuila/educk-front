@@ -11,7 +11,8 @@
     "dev": "vite --port 3000 --host",
     "build": "vite build",
     "lint": "echo \"Linting passed\"",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "node --test"
   },
   "dependencies": {
     "lucide-react": "^0.441.0",
