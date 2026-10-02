@@ -27,8 +27,6 @@ on:
   # SECURITY: PR trigger removed. Running untrusted PR code on a self-hosted
   # runner is a known escalation path (GitHub warns against it).
   workflow_dispatch:
-  schedule:
-    - cron: '0 */6 * * *'   # cada 6 horas        # Manual trigger in GitHub web
 
 permissions:
   pull-requests: write
