@@ -3,16 +3,16 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "main": "src/apiClient.js",
+  "main": "src/core/http/apiClient.ts",
   "exports": {
-    ".": "./src/apiClient.js"
+    ".": "./src/core/http/apiClient.ts"
   },
   "scripts": {
     "dev": "vite --port 3000 --host",
     "build": "vite build",
     "lint": "echo \"Linting passed\"",
     "preview": "vite preview",
-    "test": "node --test"
+    "test": "node --experimental-strip-types --test"
   },
   "dependencies": {
     "lucide-react": "^0.441.0",
