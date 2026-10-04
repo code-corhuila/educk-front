@@ -14,6 +14,14 @@ const ROLE_STYLES = {
   ACUDIENTE:  { bg: 'bg-indigo-100', text: 'text-indigo-900', border: 'border-indigo-200', label: 'Acudiente' }
 };
 
+/**
+ * @param {{
+ *   title?: string,
+ *   activePort?: number,
+ *   user?: any,
+ *   onLogout?: (() => void) | null
+ * }} props
+ */
 export default function Navbar({ 
   title = 'Portal Central', 
   activePort = 3000, 

@@ -1,22 +1,24 @@
-import React, { useEffect, useState } from 'react';
-import Navbar from './components/Navbar';
-import Sidebar from './components/Sidebar';
-import MicrofrontendViewer from './components/MicrofrontendViewer';
-import { getPortalModule } from './portalModules';
+import { useEffect, useState } from 'react';
+import Navbar from '../components/Navbar';
+import Sidebar from '../components/Sidebar';
+import MicrofrontendViewer from '../components/MicrofrontendViewer';
+import { getPortalModule } from '../portalModules';
+
+const IDENTITY_PORTAL_URL = 'http://localhost:3001';
 
 export default function App() {
-  const [activePortalId, setActivePortalId] = useState('academic');
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [user, setUser] = useState(null);
+  const [activePortalId, setActivePortalId] = useState<string>('academic');
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [user, setUser] = useState<unknown>(null);
   const activePortal = getPortalModule(activePortalId);
 
   useEffect(() => {
     const token = localStorage.getItem('edutrack_token');
     if (!token) {
-      window.location.href = 'http://localhost:3001';
+      window.location.href = IDENTITY_PORTAL_URL;
       return;
     }
-    
+
     try {
       const savedUser = localStorage.getItem('edutrack_user');
       if (savedUser) {
@@ -25,14 +27,14 @@ export default function App() {
     } catch {
       localStorage.removeItem('edutrack_user');
     }
-    
+
     setIsAuthenticated(true);
   }, []);
 
   const handleLogout = () => {
     localStorage.removeItem('edutrack_token');
     localStorage.removeItem('edutrack_user');
-    window.location.href = 'http://localhost:3001';
+    window.location.href = IDENTITY_PORTAL_URL;
   };
 
   if (!isAuthenticated) return null;
