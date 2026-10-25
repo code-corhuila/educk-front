@@ -10,7 +10,7 @@ const IDENTITY_PORTAL_URL = 'http://localhost:3001';
 export default function App() {
   const [activePortalId, setActivePortalId] = useState<string>('academic');
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [user, setUser] = useState<unknown>(null);
+  const [user, setUser] = useState<any>(null);
 
   const activePortal = getPortalModule(activePortalId);
 
@@ -87,11 +87,12 @@ export default function App() {
     return null;
   }
 
+  const activeRole = (user?.rol || user?.role || 'ACUDIENTE').toUpperCase();
+
   return (
     <div className="shell-layout">
       <Navbar
         title={activePortal.name}
-        activePort={activePortal.port}
         user={user}
         onRoleChange={handleRoleChange}
         onLogout={handleLogout}
@@ -104,7 +105,7 @@ export default function App() {
         />
 
         <main className="shell-main">
-          <MicrofrontendViewer portal={activePortal} />
+          <MicrofrontendViewer portal={activePortal} role={activeRole} />
         </main>
       </div>
     </div>
