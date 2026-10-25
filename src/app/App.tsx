@@ -15,6 +15,27 @@ export default function App() {
   const activePortal = getPortalModule(activePortalId);
 
   useEffect(() => {
+    const hash = window.location.hash || '';
+    if (hash.startsWith('#edutrack_session=')) {
+      try {
+        const rawPayload = decodeURIComponent(hash.slice('#edutrack_session='.length));
+        const parsed = JSON.parse(rawPayload);
+        if (parsed?.token) {
+          setSession(parsed.token, parsed.user ?? null, parsed.expiresIn ?? 3600, parsed.tokenType ?? 'Bearer');
+          localStorage.setItem('edutrack_token', parsed.token);
+          if (parsed.user) {
+            localStorage.setItem('edutrack_user', JSON.stringify(parsed.user));
+          }
+          window.history?.replaceState?.(null, '', window.location.pathname + window.location.search);
+          setUser(parsed.user ?? null);
+          setIsAuthenticated(true);
+          return;
+        }
+      } catch {
+        // Ignore malformed hash payload and fall back to stored session
+      }
+    }
+
     const storedSession = getSession();
     if (storedSession?.token) {
       setUser(storedSession.user ?? null);
