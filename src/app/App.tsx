@@ -63,6 +63,19 @@ export default function App() {
     setIsAuthenticated(true);
   }, []);
 
+  const handleRoleChange = (nextRole: 'ACUDIENTE' | 'DOCENTE' | 'DIRECTIVO') => {
+    const roleProfiles = {
+      ACUDIENTE: { name: 'María López', email: 'maria.lopez@email.com', role: 'ACUDIENTE' },
+      DOCENTE: { name: 'Prof. Carlos Ramírez', email: 'carlos.ramirez@edutrack.edu.co', role: 'DOCENTE' },
+      DIRECTIVO: { name: 'Coordinación Institucional', email: 'rectoria@edutrack.edu.co', role: 'DIRECTIVO' }
+    };
+    const nextUser = roleProfiles[nextRole];
+    const currentToken = getSession()?.token || localStorage.getItem('edutrack_token') || `edutrack_demo_${nextRole.toLowerCase()}`;
+    setSession(currentToken, nextUser, 3600, 'Bearer');
+    localStorage.setItem('edutrack_user', JSON.stringify(nextUser));
+    setUser(nextUser);
+  };
+
   const handleLogout = () => {
     clearSession();
     localStorage.removeItem('edutrack_token');
@@ -80,6 +93,7 @@ export default function App() {
         title={activePortal.name}
         activePort={activePortal.port}
         user={user}
+        onRoleChange={handleRoleChange}
         onLogout={handleLogout}
       />
 
