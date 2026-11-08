@@ -10,8 +10,8 @@ const ROLE_STYLES = {
 
 export default function Navbar({
   title = 'Portal Institucional',
-  user = null,
-  onLogout = null
+  user,
+  onLogout
 }) {
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef(null);

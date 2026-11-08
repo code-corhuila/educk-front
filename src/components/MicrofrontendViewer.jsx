@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef } from 'react';
 import { isSameOriginUrl } from '../core/http/apiClient';
 
-export default function MicrofrontendViewer({ portal, token = '', role = 'ACUDIENTE', user = null, view = '' }) {
+export default function MicrofrontendViewer({ portal, token = '', role = 'ACUDIENTE', user, view = '' }) {
   const iframeRef = useRef(null);
   const portalOrigin = new URL(portal.url).origin;
   const separator = portal.url.includes('?') ? '&' : '?';
