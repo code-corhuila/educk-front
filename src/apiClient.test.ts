@@ -1,25 +1,53 @@
-import { getSession, setSession, clearSession, loginWithApi, apiFetch } from './core/http/apiClient.ts';
+import { getSession, setSession, clearSession, loginWithApi, apiFetch, decodeJwtPayload, mapJwtRole, isSameOriginUrl } from './core/http/apiClient.ts';
 import { describe, it, beforeEach, mock } from 'node:test';
 import assert from 'node:assert/strict';
 
+const makeJwt = (claims: Record<string, any>) => `${Buffer.from('{"alg":"RS256"}').toString('base64url')}.${Buffer.from(JSON.stringify(claims)).toString('base64url')}.sig`;
+
 describe('Shared Session Module', () => {
+  let sessionStore: Record<string, string>, localStore: Record<string, string>;
   beforeEach(() => {
-    const store: Record<string, string> = {};
+    sessionStore = {};
+    localStore = { edutrack_token: 'legacy-token', edutrack_user: '{}' };
+    global.sessionStorage = {
+      getItem: mock.fn((k: string) => sessionStore[k] || null),
+      setItem: mock.fn((k: string, v: string) => { sessionStore[k] = v.toString(); }),
+      removeItem: mock.fn((k: string) => { delete sessionStore[k]; })
+    } as any;
     global.localStorage = {
-      getItem: mock.fn((key: string) => store[key] || null),
-      setItem: mock.fn((key: string, value: string) => { store[key] = value.toString(); }),
-      removeItem: mock.fn((key: string) => { delete store[key]; })
+      getItem: mock.fn((k: string) => localStore[k] || null),
+      setItem: mock.fn((k: string, v: string) => { localStore[k] = v.toString(); }),
+      removeItem: mock.fn((k: string) => { delete localStore[k]; })
     } as any;
     clearSession();
     global.fetch = mock.fn();
   });
 
-  it('should store and clear session in memory', () => {
+  it('should store session in sessionStorage, purge legacy localStorage, and reject expired tokens', () => {
     assert.equal(getSession(), null);
-    setSession('mock_token', { name: 'Test' });
-    assert.deepEqual(getSession(), { token: 'mock_token', user: { name: 'Test' } });
-    clearSession();
+    assert.equal(localStore.edutrack_token, undefined);
+
+    const validJwt = makeJwt({ sub: 'u-1', role: 'TEACHER', exp: Math.floor(Date.now() / 1000) + 900 });
+    setSession(validJwt, { name: 'Test' }, 900, 'Bearer');
+    const saved = getSession();
+    assert.equal(saved.token, validJwt);
+    assert.equal(saved.role, 'DOCENTE');
+
+    const expiredJwt = makeJwt({ sub: 'u-1', role: 'PARENT', exp: Math.floor(Date.now() / 1000) - 10 });
+    setSession(expiredJwt, { name: 'Expired' });
     assert.equal(getSession(), null);
+  });
+
+  it('decodes JWT payload, maps allowed roles, rejects STUDENT, and validates exact origins', () => {
+    const token = makeJwt({ sub: '123', role: 'SUPER_ADMIN', exp: 9999999999 });
+    assert.equal(decodeJwtPayload(token)?.sub, '123');
+    assert.equal(mapJwtRole('PARENT'), 'ACUDIENTE');
+    assert.equal(mapJwtRole('TEACHER'), 'DOCENTE');
+    assert.equal(mapJwtRole('ADMIN'), 'DIRECTIVO');
+    assert.equal(mapJwtRole('STUDENT'), null);
+    assert.equal(isSameOriginUrl('http://localhost:3001', 'http://localhost:3001/?embedded=1'), true);
+    assert.equal(isSameOriginUrl('http://localhost:3001.evil.example', 'http://localhost:3001'), false);
+    assert.equal(isSameOriginUrl('null', 'http://localhost:3001'), false);
   });
 
   it('loginWithApi should throw specific error on failure', async () => {
