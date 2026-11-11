@@ -1,37 +1,22 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-/**
- * Navbar.jsx - Institutional Top Navigation Bar (Frontend Shell)
- * EduTrack — Sistemas Distribuidos 2026-B
- * Architecture: Microfrontend Host Shell (ADR-006 on port :3000)
- */
-
 const ROLE_STYLES = {
-  DOCENTE:    { bg: 'bg-amber-100', text: 'text-amber-900', border: 'border-amber-200', label: 'Docente' },
-  ADMIN:      { bg: 'bg-purple-100', text: 'text-purple-900', border: 'border-purple-200', label: 'Directivo / Admin' },
-  DIRECTIVO:  { bg: 'bg-purple-100', text: 'text-purple-900', border: 'border-purple-200', label: 'Directivo' },
-  ESTUDIANTE: { bg: 'bg-green-100', text: 'text-green-800', border: 'border-green-200', label: 'Estudiante' },
-  ACUDIENTE:  { bg: 'bg-indigo-100', text: 'text-indigo-900', border: 'border-indigo-200', label: 'Acudiente' }
+  DOCENTE:    { bg: 'bg-amber-50', text: 'text-amber-800', border: 'border-amber-200', label: 'Portal Docente' },
+  ADMIN:      { bg: 'bg-purple-50', text: 'text-purple-800', border: 'border-purple-200', label: 'Portal Dirección' },
+  DIRECTIVO:  { bg: 'bg-purple-50', text: 'text-purple-800', border: 'border-purple-200', label: 'Portal Dirección' },
+  ESTUDIANTE: { bg: 'bg-green-50', text: 'text-green-800', border: 'border-green-200', label: 'Portal Estudiante' },
+  ACUDIENTE:  { bg: 'bg-blue-50', text: 'text-blue-800', border: 'border-blue-200', label: 'Portal Familias / Acudiente' }
 };
 
-/**
- * @param {{
- *   title?: string,
- *   activePort?: number,
- *   user?: any,
- *   onLogout?: (() => void) | null
- * }} props
- */
-export default function Navbar({ 
-  title = 'Portal Central', 
-  activePort = 3000, 
-  user = null, 
-  onLogout = null 
+export default function Navbar({
+  title = 'Portal Institucional',
+  user = null,
+  onRoleChange = null,
+  onLogout = null
 }) {
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef(null);
 
-  // Active user with fallback default values
   const currentUser = user || (() => {
     try {
       const saved = localStorage.getItem('edutrack_user');
@@ -40,30 +25,22 @@ export default function Navbar({
       return null;
     }
   })() || {
-    name: 'Ximena Del Pilar Zambrano',
-    role: 'DOCENTE',
-    email: 'ximena.zambrano@edutrack.edu.co'
+    name: 'María López',
+    role: 'ACUDIENTE',
+    email: 'maria.lopez@email.com'
   };
 
-  // Avatar initials calculation
   const getInitials = (name) => {
-    if (!name) return 'ED';
+    if (!name) return 'ET';
     const parts = name.trim().split(/\s+/);
     if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
     return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
   };
 
-  // Dynamic RBAC role styles
-  const userRole = currentUser.rol || currentUser.role || 'DOCENTE';
+  const userRole = currentUser.rol || currentUser.role || 'ACUDIENTE';
   const roleKey = userRole.toUpperCase();
-  const roleConfig = ROLE_STYLES[roleKey] || {
-    bg: 'bg-slate-100',
-    text: 'text-slate-600',
-    border: 'border-slate-300',
-    label: userRole || 'Usuario'
-  };
+  const roleConfig = ROLE_STYLES[roleKey] || ROLE_STYLES.ACUDIENTE;
 
-  // Close menu on outside click
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (menuRef.current && !menuRef.current.contains(e.target)) {
@@ -76,7 +53,6 @@ export default function Navbar({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showMenu]);
 
-  // Secure logout routine
   const handleLogout = () => {
     setShowMenu(false);
     try {
@@ -85,7 +61,6 @@ export default function Navbar({
     } catch (err) {
       console.error('Failed to clear local session:', err);
     }
-
     if (typeof onLogout === 'function') {
       onLogout();
     } else {
@@ -95,54 +70,51 @@ export default function Navbar({
 
   return (
     <header className="shell-navbar h-16 bg-white border-b border-slate-200 flex items-center justify-between px-6 shadow-sm relative z-20">
-      
-      {/* Left Section: Branding, Module, and Port */}
       <div className="shell-navbar__context flex items-center gap-4">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-lg bg-slate-900 text-teal-400 font-extrabold text-xs flex items-center justify-center">
+            ET
+          </div>
           <span className="text-lg font-extrabold text-slate-900 tracking-tight">
-            Edu<span className="text-teal-500">Track</span>
-          </span>
-          <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wide">
-            Shell
+            Edu<span className="text-teal-600">Track</span>
           </span>
         </div>
 
-        <div className="h-5 w-px bg-slate-300" />
+        <div className="h-5 w-px bg-slate-200" />
 
-        <div className="flex items-center gap-3">
-          <span className="font-semibold text-slate-800 text-sm">
-            {title}
-          </span>
-          <span className="text-xs bg-sky-100 text-sky-700 px-3 py-1 rounded-full font-medium border border-sky-200">
-            Módulo Activo: http://localhost:{activePort}
-          </span>
+        <div className="flex items-center gap-2 text-sm">
+          <span className="text-slate-400 font-medium">Colegio EduTrack</span>
+          <span className="text-slate-300">/</span>
+          <span className="font-bold text-slate-800">{title}</span>
         </div>
       </div>
 
-      {/* Right Section: RBAC Access Control & Profile Menu */}
-      <div className="flex items-center gap-4" ref={menuRef}>
-        
-        {/* Dynamic Role Badge */}
-        <div className={`shell-navbar__role text-xs px-3 py-1 rounded-full font-bold tracking-wide border ${roleConfig.bg} ${roleConfig.text} ${roleConfig.border}`}>
-          Rol: {roleConfig.label}
-        </div>
+      <div className="flex items-center gap-3" ref={menuRef}>
+        <span className={`shell-navbar__role text-xs px-3 py-1 rounded-full font-bold border ${roleConfig.bg} ${roleConfig.text} ${roleConfig.border}`}>
+          {roleConfig.label}
+        </span>
 
-        {/* Avatar Button with Initials */}
         <div className="relative">
           <button
             type="button"
             onClick={() => setShowMenu(!showMenu)}
-            className="bg-sky-500 text-white border-2 border-sky-100 rounded-full w-10 h-10 flex items-center justify-center cursor-pointer font-bold text-sm shadow-sm transition-all hover:bg-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-400 focus:ring-offset-1"
-            title={currentUser.name || currentUser.nombre}
+            className="flex items-center gap-2.5 pl-1.5 pr-3 py-1 rounded-full border border-slate-200 bg-slate-50 hover:bg-slate-100 transition-all cursor-pointer"
           >
-            {getInitials(currentUser.name || currentUser.nombre)}
+            <span className="bg-slate-900 text-white rounded-full w-7 h-7 flex items-center justify-center font-bold text-xs">
+              {getInitials(currentUser.name || currentUser.nombre)}
+            </span>
+            <span className="text-xs font-bold text-slate-800">
+              {currentUser.name || currentUser.nombre}
+            </span>
           </button>
 
-          {/* Dropdown Menu */}
           {showMenu && (
-            <div className="absolute top-full right-0 mt-2 bg-white border border-slate-200 rounded-lg shadow-lg w-56 z-50 overflow-hidden">
+            <div className="absolute top-full right-0 mt-2 bg-white border border-slate-200 rounded-xl shadow-lg w-64 z-50 overflow-hidden">
               <div className="px-4 py-3 bg-slate-50 border-b border-slate-200">
-                <div className="text-sm font-bold text-slate-900 truncate">
+                <div className="text-xs font-extrabold text-teal-700 uppercase tracking-wider">
+                  {roleConfig.label}
+                </div>
+                <div className="text-sm font-bold text-slate-900 truncate mt-0.5">
                   {currentUser.name || currentUser.nombre}
                 </div>
                 <div className="text-xs text-slate-500 truncate">
@@ -150,22 +122,39 @@ export default function Navbar({
                 </div>
               </div>
 
+              <div className="px-3 py-2 border-b border-slate-100">
+                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-1 mb-1.5">
+                  Cambiar cuenta activa
+                </div>
+                {[
+                  { id: 'ACUDIENTE', label: 'María López (Acudiente)' },
+                  { id: 'DOCENTE', label: 'Prof. Carlos Ramírez (Docente)' },
+                  { id: 'DIRECTIVO', label: 'Mag. Juan Pérez (Director)' }
+                ].map((acc) => (
+                  <button
+                    key={acc.id}
+                    type="button"
+                    onClick={() => {
+                      onRoleChange?.(acc.id);
+                      setShowMenu(false);
+                    }}
+                    className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center justify-between cursor-pointer ${
+                      roleKey === acc.id ? 'bg-blue-50 text-blue-700 font-bold' : 'text-slate-700 hover:bg-slate-100'
+                    }`}
+                  >
+                    <span>{acc.label}</span>
+                    {roleKey === acc.id && <span>●</span>}
+                  </button>
+                ))}
+              </div>
+
               <div className="py-1">
                 <button
                   type="button"
-                  className="w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-100 flex items-center gap-2 cursor-pointer font-medium focus:outline-none"
-                >
-                  👤 Mi Perfil Institucional
-                </button>
-
-                <div className="h-px bg-slate-100 my-1" />
-
-                <button
-                  type="button"
                   onClick={handleLogout}
-                  className="w-full text-left px-4 py-2 text-xs text-red-500 font-semibold hover:bg-red-50 flex items-center gap-2 cursor-pointer focus:outline-none"
+                  className="w-full text-left px-4 py-2.5 text-xs text-red-600 font-bold hover:bg-red-50 flex items-center gap-2 cursor-pointer"
                 >
-                  🚪 Cerrar Sesión
+                  Cerrar sesión e ir al Login
                 </button>
               </div>
             </div>

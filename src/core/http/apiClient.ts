@@ -1,32 +1,35 @@
 const SESSION_KEY = 'edutrack_session';
-
+function randomHex(byteLength: number): string {
+  if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
+    const bytes = new Uint8Array(byteLength);
+    crypto.getRandomValues(bytes);
+    return Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('');
+  }
+  return Array.from({ length: byteLength * 2 }, () => Math.floor(Math.random() * 16).toString(16)).join('');
+}
 export const setSession = (token: string, user: any, expiresIn?: number, tokenType?: string) => {
   const sessionData = { token, user, expiresIn, tokenType };
   localStorage.setItem(SESSION_KEY, JSON.stringify(sessionData));
 };
-
 export const getSession = () => {
   const data = localStorage.getItem(SESSION_KEY);
   return data ? JSON.parse(data) : null;
 };
-
 export const clearSession = () => {
   localStorage.removeItem(SESSION_KEY);
 };
-
 export const apiFetch = async (url: string, options: RequestInit = {}) => {
   const headers = new Headers(options.headers || {});
   const session = getSession();
-  
   if (session?.token) {
     headers.set('Authorization', `Bearer ${session.token}`);
   }
-  
   headers.set('X-Correlation-Id', crypto.randomUUID());
-  
+  if (!headers.has('traceparent')) {
+    headers.set('traceparent', `00-${randomHex(16)}-${randomHex(8)}-01`);
+  }
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 10000);
-  
   try {
     const response = await fetch(url, { ...options, headers, signal: controller.signal });
     if (response.status === 401) {
@@ -43,7 +46,6 @@ export const apiFetch = async (url: string, options: RequestInit = {}) => {
     clearTimeout(timeoutId);
   }
 };
-
 /**
  * Shared login logic to prevent duplication in every portal.
  */
@@ -52,19 +54,21 @@ export const loginWithApi = async (email: string, password: string, gatewayUrl: 
   try {
     response = await fetch(`${gatewayUrl}/api/v1/auth/login`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        traceparent: `00-${randomHex(16)}-${randomHex(8)}-01`,
+        'X-Correlation-Id': crypto.randomUUID()
+      },
       body: JSON.stringify({ email, password })
     });
-  } catch (e: any) {
-    // Network error (DNS, CORS, offline)
+  } catch {
     throw new Error('Network error: Could not reach the authentication server.');
   }
-
   if (!response.ok) {
     let errorData;
     try {
       errorData = await response.json();
-    } catch (e) {
+    } catch {
       errorData = { message: response.statusText || 'Authentication failed' };
     }
     const error: any = new Error(errorData.message || 'Authentication failed');
@@ -72,8 +76,5 @@ export const loginWithApi = async (email: string, password: string, gatewayUrl: 
     error.body = errorData;
     throw error;
   }
-
-  const rawData = await response.json();
-  // Don't drop fields; return the full response object
-  return rawData;
+  return await response.json();
 };
