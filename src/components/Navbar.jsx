@@ -10,24 +10,16 @@ const ROLE_STYLES = {
 
 export default function Navbar({
   title = 'Portal Institucional',
-  user = null,
-  onRoleChange = null,
-  onLogout = null
+  user,
+  onLogout
 }) {
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef(null);
 
-  const currentUser = user || (() => {
-    try {
-      const saved = localStorage.getItem('edutrack_user');
-      return saved ? JSON.parse(saved) : null;
-    } catch {
-      return null;
-    }
-  })() || {
-    name: 'María López',
+  const currentUser = user || {
+    name: 'Usuario Institucional',
     role: 'ACUDIENTE',
-    email: 'maria.lopez@email.com'
+    email: ''
   };
 
   const getInitials = (name) => {
@@ -55,12 +47,6 @@ export default function Navbar({
 
   const handleLogout = () => {
     setShowMenu(false);
-    try {
-      localStorage.removeItem('edutrack_token');
-      localStorage.removeItem('edutrack_user');
-    } catch (err) {
-      console.error('Failed to clear local session:', err);
-    }
     if (typeof onLogout === 'function') {
       onLogout();
     } else {
@@ -120,32 +106,6 @@ export default function Navbar({
                 <div className="text-xs text-slate-500 truncate">
                   {currentUser.email}
                 </div>
-              </div>
-
-              <div className="px-3 py-2 border-b border-slate-100">
-                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-1 mb-1.5">
-                  Cambiar cuenta activa
-                </div>
-                {[
-                  { id: 'ACUDIENTE', label: 'María López (Acudiente)' },
-                  { id: 'DOCENTE', label: 'Prof. Carlos Ramírez (Docente)' },
-                  { id: 'DIRECTIVO', label: 'Mag. Juan Pérez (Director)' }
-                ].map((acc) => (
-                  <button
-                    key={acc.id}
-                    type="button"
-                    onClick={() => {
-                      onRoleChange?.(acc.id);
-                      setShowMenu(false);
-                    }}
-                    className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center justify-between cursor-pointer ${
-                      roleKey === acc.id ? 'bg-blue-50 text-blue-700 font-bold' : 'text-slate-700 hover:bg-slate-100'
-                    }`}
-                  >
-                    <span>{acc.label}</span>
-                    {roleKey === acc.id && <span>●</span>}
-                  </button>
-                ))}
               </div>
 
               <div className="py-1">
