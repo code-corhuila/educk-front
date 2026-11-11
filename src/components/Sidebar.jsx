@@ -8,8 +8,8 @@ const ROLE_CONTEXT_CARD = {
 };
 
 export function getRoleMenuItems(role = 'ACUDIENTE') {
-  const normalized = role.toUpperCase();
-  if (normalized === 'DOCENTE') {
+  const normalized = (role || 'ACUDIENTE').toUpperCase().replace(/^ROLE_/, '');
+  if (normalized === 'DOCENTE' || normalized === 'TEACHER') {
     return [
       { navId: 'academic', portalId: 'academic', view: '', title: 'Planilla de Calificaciones', subtitle: 'Registrar notas y evaluaciones 10°A', icon: BookOpen },
       { navId: 'attendance', portalId: 'attendance', view: '', title: 'Pase de Lista y Fallas', subtitle: 'Control diario de asistencia 10°A', icon: CalendarCheck },
@@ -17,7 +17,7 @@ export function getRoleMenuItems(role = 'ACUDIENTE') {
       { navId: 'comm-circ', portalId: 'communication', view: 'canales', title: 'Circulares Académicas', subtitle: 'Comunicados institucionales', icon: Users }
     ];
   }
-  if (normalized === 'DIRECTIVO' || normalized === 'ADMIN') {
+  if (normalized === 'DIRECTIVO' || normalized === 'ADMIN' || normalized === 'SUPER_ADMIN') {
     return [
       { navId: 'academic', portalId: 'academic', view: '', title: 'Consolidado Académico', subtitle: 'Supervisión de promedios por área', icon: BookOpen },
       { navId: 'attendance', portalId: 'attendance', view: '', title: 'Aval de Excusas y Fallas', subtitle: 'Aprobación de excusas médicas', icon: CalendarCheck },
@@ -34,9 +34,11 @@ export function getRoleMenuItems(role = 'ACUDIENTE') {
   ];
 }
 
-export default function Sidebar({ role = 'ACUDIENTE', activePortalId, onSelectPortal }) {
-  const context = ROLE_CONTEXT_CARD[role.toUpperCase()] || ROLE_CONTEXT_CARD.ACUDIENTE;
-  const items = getRoleMenuItems(role);
+export default function Sidebar({ role = 'ACUDIENTE', user, activePortalId, onSelectPortal }) {
+  const normalizedRole = (role || 'ACUDIENTE').toUpperCase().replace(/^ROLE_/, '');
+  const context = ROLE_CONTEXT_CARD[normalizedRole] || ROLE_CONTEXT_CARD.ACUDIENTE;
+  const displayName = normalizedRole === 'ACUDIENTE' ? context.name : (user?.name || user?.nombre || context.name);
+  const items = getRoleMenuItems(normalizedRole);
 
   return (
     <aside className="shell-sidebar" aria-label="Menú institucional de EduTrack">
@@ -45,7 +47,7 @@ export default function Sidebar({ role = 'ACUDIENTE', activePortalId, onSelectPo
           {context.badge}
         </div>
         <div style={{ fontSize: '14px', fontWeight: 700, color: '#ffffff', marginTop: '4px' }}>
-          {context.name}
+          {displayName}
         </div>
         <div style={{ fontSize: '12px', color: '#94a3b8', marginTop: '2px' }}>
           {context.detail}

@@ -10,6 +10,8 @@ const ROLE_STYLES = {
 
 export default function Navbar({
   title = 'Portal Institucional',
+  activePort = 3000,
+  activeUrl = '',
   user,
   onLogout
 }) {
@@ -30,7 +32,7 @@ export default function Navbar({
   };
 
   const userRole = currentUser.rol || currentUser.role || 'ACUDIENTE';
-  const roleKey = userRole.toUpperCase();
+  const roleKey = userRole.toUpperCase().replace(/^ROLE_/, '');
   const roleConfig = ROLE_STYLES[roleKey] || ROLE_STYLES.ACUDIENTE;
 
   useEffect(() => {
@@ -72,6 +74,11 @@ export default function Navbar({
           <span className="text-slate-400 font-medium">Colegio EduTrack</span>
           <span className="text-slate-300">/</span>
           <span className="font-bold text-slate-800">{title}</span>
+          {import.meta.env.DEV && (
+            <span className="text-xs bg-sky-50 text-sky-700 px-2.5 py-0.5 rounded-full font-medium border border-sky-200 font-mono ml-2">
+              Módulo Activo: {activeUrl || `http://localhost:${activePort || 3002}`}
+            </span>
+          )}
         </div>
       </div>
 
