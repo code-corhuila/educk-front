@@ -1,9 +1,9 @@
 # educk-front
 
-> Front-end shell: packages the domain UIs
-
-Part of the **LMS Library** distributed system — team `lms-library`, Grupo 2.
-Governance and documentation live in [`library-docs`](https://github.com/code-corhuila/library-docs).
+EduTrack host shell for the satellite portals running on ports `3001`, `3002`, `3003`, and `3005`.
+The React 18 + Vite application runs on port `3000` and provides unified navigation without a
+full-page reload. Project governance and architecture live in
+[`educk-docs`](https://github.com/code-corhuila/educk-docs).
 
 ## Branching
 

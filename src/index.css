@@ -1,0 +1,201 @@
+@import './design-tokens.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* ==============================================================
+     SISTEMA DE DISEÑO EDUTRACK - EXTRAÍDO DEL MVP (FIGMA)
+     ============================================================== */
+     
+  /* Colores Principales (Brand) */
+  --edutrack-primary-teal: #00C4A7;     /* Usado en el logo y acentos principales */
+  --edutrack-primary-blue: #29B6F6;     /* Gradiente secundario (círculo derecho) */
+  
+  /* Fondos y Paneles */
+  --edutrack-bg-dark: var(--color-primary-900);          /* Panel derecho oscuro y botones (Dark Blue) */
+  --edutrack-bg-slate: var(--color-sidebar-hover);         /* Alternativa de sidebar oscuro (Slate 800) */
+  --edutrack-bg-light: var(--color-text-inverse);         /* Fondo izquierdo y tarjetas */
+  --edutrack-bg-muted: var(--color-bg-page);         /* Fondos secundarios de main content */
+
+  /* Tipografía y Texto */
+  --edutrack-text-main: var(--color-sidebar-bg);        /* Títulos pesados (Slate 900) */
+  --edutrack-text-muted: var(--color-text-secondary);       /* Subtítulos y descripciones (Slate 500) */
+  
+  /* Tipografía Principal */
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-family-sans);
+  background-color: var(--edutrack-bg-light);
+  color: var(--edutrack-text-main);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.shell-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.shell-workspace {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.shell-sidebar {
+  width: 260px;
+  padding: 24px 12px;
+  color: var(--color-text-inverse);
+  background: var(--color-sidebar-bg);
+  border-right: 1px solid #334155;
+}
+
+.shell-sidebar__label {
+  margin: 0 12px 12px;
+  color: var(--color-sidebar-text);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.shell-sidebar__list {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.shell-sidebar__button {
+  display: flex;
+  width: 100%;
+  gap: 12px;
+  align-items: center;
+  padding: 12px;
+  color: #cbd5e1;
+  text-align: left;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
+}
+
+.shell-sidebar__button:hover,
+.shell-sidebar__button:focus-visible {
+  color: var(--color-text-inverse);
+  background: var(--color-sidebar-hover);
+  outline: none;
+}
+
+.shell-sidebar__button:focus-visible {
+  box-shadow: 0 0 0 3px #60a5fa;
+}
+
+.shell-sidebar__button.is-active {
+  color: var(--color-text-inverse);
+  background: #1d4ed8;
+  border-color: #60a5fa;
+}
+
+.shell-sidebar__button span {
+  display: grid;
+  gap: 2px;
+}
+
+.shell-sidebar__button small {
+  color: inherit;
+  font-size: 0.7rem;
+  opacity: 0.78;
+}
+
+.shell-main {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  background: var(--color-bg-page);
+}
+
+.shell-portal-frame {
+  width: 100%;
+  min-height: calc(100vh - 64px);
+  flex: 1;
+  background: var(--color-text-inverse);
+  border: none;
+  border-radius: 0;
+}
+
+@media (max-width: 768px) {
+  .shell-navbar {
+    padding-inline: 12px;
+  }
+
+  .shell-navbar__context {
+    gap: 8px;
+  }
+
+  .shell-navbar__role {
+    display: none;
+  }
+
+  .shell-workspace {
+    flex-direction: column;
+    overflow: auto;
+  }
+
+  .shell-sidebar {
+    width: 100%;
+    padding: 10px;
+    border-right: 0;
+  }
+
+  .shell-sidebar__label,
+  .shell-sidebar__button small {
+    display: none;
+  }
+
+  .shell-sidebar__list {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .shell-sidebar__button {
+    justify-content: center;
+    padding: 10px 6px;
+    text-align: center;
+  }
+
+  .shell-main {
+    min-height: calc(100vh - 144px);
+    padding: 8px;
+  }
+
+  .shell-portal-frame {
+    min-height: calc(100vh - 160px);
+    border-radius: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .shell-navbar__context > div:last-child span:last-child {
+    display: none;
+  }
+
+  .shell-sidebar__button {
+    gap: 4px;
+    flex-direction: column;
+    font-size: 0.72rem;
+  }
+}
