@@ -34,8 +34,10 @@ export function getRoleMenuItems(role = 'ACUDIENTE') {
   ];
 }
 
-export default function Sidebar({ role = 'ACUDIENTE', activePortalId, onSelectPortal }) {
-  const context = ROLE_CONTEXT_CARD[role.toUpperCase()] || ROLE_CONTEXT_CARD.ACUDIENTE;
+export default function Sidebar({ role = 'ACUDIENTE', user, activePortalId, onSelectPortal }) {
+  const normalizedRole = role.toUpperCase();
+  const context = ROLE_CONTEXT_CARD[normalizedRole] || ROLE_CONTEXT_CARD.ACUDIENTE;
+  const displayName = normalizedRole === 'ACUDIENTE' ? context.name : (user?.name || user?.nombre || context.name);
   const items = getRoleMenuItems(role);
 
   return (
@@ -45,7 +47,7 @@ export default function Sidebar({ role = 'ACUDIENTE', activePortalId, onSelectPo
           {context.badge}
         </div>
         <div style={{ fontSize: '14px', fontWeight: 700, color: '#ffffff', marginTop: '4px' }}>
-          {context.name}
+          {displayName}
         </div>
         <div style={{ fontSize: '12px', color: '#94a3b8', marginTop: '2px' }}>
           {context.detail}

@@ -116,7 +116,7 @@ export default function App() {
     <div className="shell-layout">
       <Navbar title={activeMenuItem.title} user={sessionState.user} onLogout={handleLogout} />
       <div className="shell-workspace">
-        <Sidebar role={activeRole} activePortalId={activeMenuItem.navId} onSelectPortal={setActiveNavId} />
+        <Sidebar role={activeRole} user={sessionState.user} activePortalId={activeMenuItem.navId} onSelectPortal={setActiveNavId} />
         <main className="shell-main">
           <MicrofrontendViewer portal={basePortal} token={sessionState.token} role={activeRole} user={sessionState.user} view={activeMenuItem.view} />
         </main>
