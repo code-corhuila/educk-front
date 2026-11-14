@@ -1,60 +1,68 @@
 import React from 'react';
 import { BookOpen, CalendarCheck, MessageSquare, Users } from 'lucide-react';
+import { normalizeRole } from '../core/roles';
 
 const ROLE_CONTEXT_CARD = {
-  ACUDIENTE: { badge: 'Estudiante Matriculado', name: 'Juan Sebastián López', detail: 'Grado 10°A · Promedio 4.4' },
-  DOCENTE: { badge: 'Asignación Académica', name: 'Prof. Carlos Ramírez', detail: 'Titular Matemáticas · 10°A' },
-  DIRECTIVO: { badge: 'Coordinación General', name: 'Mag. Juan Pérez', detail: 'Sede Bachillerato · 2026-B' }
+  ACUDIENTE: { badge: 'Estudiante matriculado', name: 'Juan Sebastián López', detail: 'Grado 10°A · Promedio 4.4' },
+  DOCENTE: { badge: 'Asignación académica', name: 'Prof. Carlos Ramírez', detail: 'Titular Matemáticas · 10°A' },
+  DIRECTIVO: { badge: 'Coordinación general', name: 'Mag. Juan Pérez', detail: 'Sede Bachillerato · 2026-B' },
+  ESTUDIANTE: { badge: 'Estudiante', name: 'Juan Sebastián López', detail: 'Grado 10°A · Solo consulta' },
 };
 
+/** Menú por rol. Cada rol solo ve los portales que puede usar. */
 export function getRoleMenuItems(role = 'ACUDIENTE') {
-  const normalized = (role || 'ACUDIENTE').toUpperCase().replace(/^ROLE_/, '');
-  if (normalized === 'DOCENTE' || normalized === 'TEACHER') {
+  const normalized = normalizeRole(role);
+
+  if (normalized === 'DOCENTE') {
     return [
-      { navId: 'academic', portalId: 'academic', view: '', title: 'Planilla de Calificaciones', subtitle: 'Registrar notas y evaluaciones 10°A', icon: BookOpen },
-      { navId: 'attendance', portalId: 'attendance', view: '', title: 'Pase de Lista y Fallas', subtitle: 'Control diario de asistencia 10°A', icon: CalendarCheck },
-      { navId: 'comm-msg', portalId: 'communication', view: 'mensajeria', title: 'Atención a Acudientes', subtitle: 'Bandeja de mensajes con familias', icon: MessageSquare },
-      { navId: 'comm-circ', portalId: 'communication', view: 'canales', title: 'Circulares Académicas', subtitle: 'Comunicados institucionales', icon: Users }
+      { navId: 'academic', portalId: 'academic', view: '', title: 'Planilla de calificaciones', subtitle: 'Registrar notas y evaluaciones 10°A', icon: BookOpen },
+      { navId: 'attendance', portalId: 'attendance', view: '', title: 'Pase de lista y fallas', subtitle: 'Control diario de asistencia 10°A', icon: CalendarCheck },
+      { navId: 'comm-msg', portalId: 'communication', view: 'mensajeria', title: 'Atención a acudientes', subtitle: 'Bandeja de mensajes con familias', icon: MessageSquare },
+      { navId: 'comm-circ', portalId: 'communication', view: 'canales', title: 'Circulares académicas', subtitle: 'Comunicados institucionales', icon: Users },
     ];
   }
-  if (normalized === 'DIRECTIVO' || normalized === 'ADMIN' || normalized === 'SUPER_ADMIN') {
+
+  if (normalized === 'DIRECTIVO') {
     return [
-      { navId: 'academic', portalId: 'academic', view: '', title: 'Consolidado Académico', subtitle: 'Supervisión de promedios por área', icon: BookOpen },
-      { navId: 'attendance', portalId: 'attendance', view: '', title: 'Aval de Excusas y Fallas', subtitle: 'Aprobación de excusas médicas', icon: CalendarCheck },
-      { navId: 'comm-circ', portalId: 'communication', view: 'canales', title: 'Circulares Oficiales', subtitle: 'Publicaciones de rectoría', icon: MessageSquare },
-      { navId: 'comm-audit', portalId: 'communication', view: 'lecturas', title: 'Auditoría de Acuses', subtitle: 'Trazabilidad de lectura certificada', icon: Users }
+      { navId: 'academic', portalId: 'academic', view: '', title: 'Consolidado académico', subtitle: 'Supervisión de promedios por área', icon: BookOpen },
+      { navId: 'attendance', portalId: 'attendance', view: '', title: 'Aval de excusas y fallas', subtitle: 'Aprobación de excusas médicas', icon: CalendarCheck },
+      { navId: 'comm-circ', portalId: 'communication', view: 'canales', title: 'Circulares oficiales', subtitle: 'Publicaciones de rectoría', icon: MessageSquare },
+      { navId: 'comm-audit', portalId: 'communication', view: 'lecturas', title: 'Auditoría de acuses', subtitle: 'Trazabilidad de lectura certificada', icon: Users },
     ];
   }
+
+  if (normalized === 'ESTUDIANTE') {
+    return [
+      { navId: 'academic', portalId: 'academic', view: '', title: 'Mis calificaciones', subtitle: 'Consulta tu rendimiento por materia', icon: BookOpen },
+      { navId: 'attendance', portalId: 'attendance', view: '', title: 'Mi asistencia', subtitle: 'Porcentaje de asistencia y fallas', icon: CalendarCheck },
+      { navId: 'comm-circ', portalId: 'communication', view: 'canales', title: 'Circulares del colegio', subtitle: 'Avisos oficiales', icon: MessageSquare },
+    ];
+  }
+
   return [
-    { navId: 'academic', portalId: 'academic', view: '', title: 'Boletín y Calificaciones', subtitle: 'Notas parciales de Juan Sebastián', icon: BookOpen },
-    { navId: 'attendance', portalId: 'attendance', view: '', title: 'Inasistencias y Excusas', subtitle: 'Consultar fallas y radicar excusa', icon: CalendarCheck },
-    { navId: 'comm-msg', portalId: 'communication', view: 'mensajeria', title: 'Mensajes con Docentes', subtitle: 'Chat directo con profesores 10°A', icon: MessageSquare },
-    { navId: 'comm-circ', portalId: 'communication', view: 'canales', title: 'Circulares del Colegio', subtitle: 'Avisos oficiales y confirmación', icon: BookOpen },
-    { navId: 'comm-dir', portalId: 'communication', view: 'contactos', title: 'Directorio Docente', subtitle: 'Horarios de atención a padres', icon: Users }
+    { navId: 'academic', portalId: 'academic', view: '', title: 'Boletín y calificaciones', subtitle: 'Notas parciales de Juan Sebastián', icon: BookOpen },
+    { navId: 'attendance', portalId: 'attendance', view: '', title: 'Inasistencias y excusas', subtitle: 'Consultar fallas y radicar excusa', icon: CalendarCheck },
+    { navId: 'comm-msg', portalId: 'communication', view: 'mensajeria', title: 'Mensajes con docentes', subtitle: 'Chat directo con profesores 10°A', icon: MessageSquare },
+    { navId: 'comm-circ', portalId: 'communication', view: 'canales', title: 'Circulares del colegio', subtitle: 'Avisos oficiales y confirmación', icon: BookOpen },
+    { navId: 'comm-dir', portalId: 'communication', view: 'contactos', title: 'Directorio docente', subtitle: 'Horarios de atención a padres', icon: Users },
   ];
 }
 
 export default function Sidebar({ role = 'ACUDIENTE', user, activePortalId, onSelectPortal }) {
-  const normalizedRole = (role || 'ACUDIENTE').toUpperCase().replace(/^ROLE_/, '');
-  const context = ROLE_CONTEXT_CARD[normalizedRole] || ROLE_CONTEXT_CARD.ACUDIENTE;
+  const normalizedRole = normalizeRole(role);
+  const context = ROLE_CONTEXT_CARD[normalizedRole];
   const displayName = normalizedRole === 'ACUDIENTE' ? context.name : (user?.name || user?.nombre || context.name);
   const items = getRoleMenuItems(normalizedRole);
 
   return (
     <aside className="shell-sidebar" aria-label="Menú institucional de EduTrack">
-      <div style={{ padding: '12px 14px', background: 'rgba(30,41,59,0.7)', border: '1px solid rgba(148,163,184,0.16)', borderRadius: '10px', marginBottom: '18px' }}>
-        <div style={{ fontSize: '10px', fontWeight: 800, color: '#38bdf8', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-          {context.badge}
-        </div>
-        <div style={{ fontSize: '14px', fontWeight: 700, color: '#ffffff', marginTop: '4px' }}>
-          {displayName}
-        </div>
-        <div style={{ fontSize: '12px', color: '#94a3b8', marginTop: '2px' }}>
-          {context.detail}
-        </div>
+      <div className="mb-4 rounded-xl border border-slate-400/20 bg-slate-800/70 px-3.5 py-3">
+        <div className="text-[10px] font-extrabold uppercase tracking-[0.08em] text-sky-400">{context.badge}</div>
+        <div className="mt-1 text-sm font-bold text-white">{displayName}</div>
+        <div className="mt-0.5 text-xs text-slate-400">{context.detail}</div>
       </div>
 
-      <p className="shell-sidebar__label">Menú de Navegación</p>
+      <p className="shell-sidebar__label">Menú de navegación</p>
       <ul className="shell-sidebar__list">
         {items.map((item) => {
           const Icon = item.icon;
@@ -81,3 +89,4 @@ export default function Sidebar({ role = 'ACUDIENTE', user, activePortalId, onSe
     </aside>
   );
 }
+
