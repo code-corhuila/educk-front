@@ -42,160 +42,90 @@ body {
 
 .shell-layout {
   display: flex;
-  flex-direction: column;
-  min-height: 100vh;
+  height: 100vh;
+  padding: 12px;
+  background: #dfe7f3;
 }
 
 .shell-workspace {
   display: flex;
   flex: 1;
+  min-width: 0;
   min-height: 0;
   overflow: hidden;
+  border-radius: 20px;
+  background: var(--color-bg-page);
+  box-shadow: var(--shadow-lg);
 }
 
 .shell-sidebar {
-  width: 260px;
-  padding: 24px 12px;
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  width: 240px;
+  padding: 28px 16px;
   color: var(--color-text-inverse);
   background: var(--color-sidebar-bg);
-  border-right: 1px solid #334155;
+  overflow-y: auto;
 }
 
-.shell-sidebar__label {
-  margin: 0 12px 12px;
-  color: var(--color-sidebar-text);
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+.shell-brand {
+  margin: 0 8px 24px;
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
 }
+.shell-brand span { color: var(--color-brand-teal); }
 
-.shell-sidebar__list {
-  display: grid;
-  gap: 6px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
+.shell-user { position: relative; margin-bottom: 24px; }
+.shell-user__card {
+  display: flex; width: 100%; align-items: center; gap: 10px; padding: 10px;
+  color: inherit; text-align: left; cursor: pointer;
+  background: rgba(255, 255, 255, 0.07); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 14px;
 }
+.shell-user__card:hover { background: rgba(255, 255, 255, 0.12); }
+.shell-user__avatar {
+  display: flex; flex: none; width: 38px; height: 38px; align-items: center; justify-content: center;
+  font-size: 0.85rem; font-weight: 800; color: #0f766e; background: #ccfbf1; border-radius: 9999px;
+}
+.shell-user__text { display: grid; min-width: 0; flex: 1; }
+.shell-user__text strong { overflow: hidden; font-size: 0.82rem; text-overflow: ellipsis; white-space: nowrap; }
+.shell-user__text small { overflow: hidden; font-size: 0.68rem; color: var(--color-sidebar-text); text-overflow: ellipsis; white-space: nowrap; }
+.shell-user__chevron { color: var(--color-sidebar-text); }
+.shell-user__menu {
+  position: absolute; z-index: 30; top: calc(100% + 6px); left: 0; right: 0; overflow: hidden;
+  background: #fff; color: var(--color-text-primary); border-radius: 12px; box-shadow: var(--shadow-lg);
+}
+.shell-user__email { padding: 10px 14px; font-size: 0.72rem; color: var(--color-text-secondary); border-bottom: 1px solid var(--border-color); }
+.shell-user__menu button { width: 100%; padding: 10px 14px; font-size: 0.8rem; font-weight: 700; color: #b91c1c; text-align: left; background: none; border: 0; cursor: pointer; }
+.shell-user__menu button:hover { background: #fef2f2; }
+
+.shell-sidebar__label { display: none; }
+
+.shell-sidebar__list { display: grid; gap: 4px; margin: 0; padding: 0; list-style: none; }
 
 .shell-sidebar__button {
-  display: flex;
-  width: 100%;
-  gap: 12px;
-  align-items: center;
-  padding: 12px;
-  color: #cbd5e1;
-  text-align: left;
-  background: transparent;
-  border: 1px solid transparent;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
+  display: flex; width: 100%; align-items: center; gap: 12px; padding: 12px 14px;
+  color: var(--color-sidebar-text); font-size: 0.9rem; text-align: left; cursor: pointer;
+  background: transparent; border: 0; border-radius: 12px;
+  transition: background 150ms ease, color 150ms ease;
 }
-
 .shell-sidebar__button:hover,
-.shell-sidebar__button:focus-visible {
-  color: var(--color-text-inverse);
-  background: var(--color-sidebar-hover);
-  outline: none;
-}
+.shell-sidebar__button:focus-visible { color: #fff; background: var(--color-sidebar-hover); outline: none; }
+.shell-sidebar__button:focus-visible { box-shadow: 0 0 0 2px #93c5fd; }
+.shell-sidebar__button.is-active { color: #fff; font-weight: 700; background: var(--color-sidebar-active); }
 
-.shell-sidebar__button:focus-visible {
-  box-shadow: 0 0 0 3px #60a5fa;
-}
+.shell-main { display: flex; flex: 1; min-width: 0; min-height: 0; background: var(--color-bg-page); }
 
-.shell-sidebar__button.is-active {
-  color: var(--color-text-inverse);
-  background: #1d4ed8;
-  border-color: #60a5fa;
-}
-
-.shell-sidebar__button span {
-  display: grid;
-  gap: 2px;
-}
-
-.shell-sidebar__button small {
-  color: inherit;
-  font-size: 0.7rem;
-  opacity: 0.78;
-}
-
-.shell-main {
-  display: flex;
-  flex: 1;
-  min-width: 0;
-  padding: 0;
-  background: var(--color-bg-page);
-}
-
-.shell-portal-frame {
-  width: 100%;
-  min-height: calc(100vh - 64px);
-  flex: 1;
-  background: var(--color-text-inverse);
-  border: none;
-  border-radius: 0;
-}
+.shell-portal-frame { width: 100%; height: 100%; flex: 1; background: transparent; border: none; }
 
 @media (max-width: 768px) {
-  .shell-navbar {
-    padding-inline: 12px;
-  }
-
-  .shell-navbar__context {
-    gap: 8px;
-  }
-
-  .shell-navbar__role {
-    display: none;
-  }
-
-  .shell-workspace {
-    flex-direction: column;
-    overflow: auto;
-  }
-
-  .shell-sidebar {
-    width: 100%;
-    padding: 10px;
-    border-right: 0;
-  }
-
-  .shell-sidebar__label,
-  .shell-sidebar__button small {
-    display: none;
-  }
-
-  .shell-sidebar__list {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-
-  .shell-sidebar__button {
-    justify-content: center;
-    padding: 10px 6px;
-    text-align: center;
-  }
-
-  .shell-main {
-    min-height: calc(100vh - 144px);
-    padding: 8px;
-  }
-
-  .shell-portal-frame {
-    min-height: calc(100vh - 160px);
-    border-radius: 8px;
-  }
-}
-
-@media (max-width: 480px) {
-  .shell-navbar__context > div:last-child span:last-child {
-    display: none;
-  }
-
-  .shell-sidebar__button {
-    gap: 4px;
-    flex-direction: column;
-    font-size: 0.72rem;
-  }
+  .shell-layout { padding: 0; }
+  .shell-workspace { flex-direction: column; border-radius: 0; overflow: auto; }
+  .shell-sidebar { width: 100%; padding: 12px; }
+  .shell-brand { margin-bottom: 12px; }
+  .shell-user { margin-bottom: 12px; }
+  .shell-sidebar__list { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); }
+  .shell-sidebar__button { justify-content: center; padding: 10px 6px; font-size: 0.78rem; }
+  .shell-main { min-height: 70vh; }
 }

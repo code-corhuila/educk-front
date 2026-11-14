@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import Navbar from '../components/Navbar';
 import Sidebar, { getRoleMenuItems } from '../components/Sidebar';
 import MicrofrontendViewer from '../components/MicrofrontendViewer';
 import { getPortalModule } from '../portalModules';
@@ -114,9 +113,14 @@ export default function App() {
 
   return (
     <div className="shell-layout">
-      <Navbar title={activeMenuItem.title} user={sessionState.user} onLogout={handleLogout} />
       <div className="shell-workspace">
-        <Sidebar role={activeRole} activePortalId={activeMenuItem.navId} onSelectPortal={setActiveNavId} />
+        <Sidebar
+          role={activeRole}
+          user={sessionState.user}
+          activePortalId={activeMenuItem.navId}
+          onSelectPortal={setActiveNavId}
+          onLogout={handleLogout}
+        />
         <main className="shell-main">
           <MicrofrontendViewer portal={basePortal} token={sessionState.token} role={activeRole} user={sessionState.user} view={activeMenuItem.view} />
         </main>
