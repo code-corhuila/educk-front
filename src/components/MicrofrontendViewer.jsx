@@ -68,4 +68,3 @@ export default function MicrofrontendViewer({ portal, token = '', role = 'ACUDIE
     </div>
   );
 }
-

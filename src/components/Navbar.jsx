@@ -20,7 +20,8 @@ function getInitials(name) {
  * los portales embebidos no deben repetirlos.
  * `devModule` (opcional) muestra la URL del módulo activo, solo en desarrollo.
  */
-export default function Navbar({ title = 'Portal Institucional', user, onLogout, devModule }) {
+export default function Navbar({ title = 'Portal Institucional', user, onLogout, devModule, activeUrl }) {
+  const moduleUrl = devModule ?? activeUrl;
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef(null);
 
@@ -69,9 +70,9 @@ export default function Navbar({ title = 'Portal Institucional', user, onLogout,
           <span className="font-bold text-slate-800">{title}</span>
         </div>
 
-        {import.meta.env?.DEV && devModule && (
+        {import.meta.env?.DEV && moduleUrl && (
           <span className="hidden rounded-full border border-slate-200 bg-slate-50 px-2.5 py-0.5 font-mono text-[11px] text-slate-500 lg:inline">
-            {devModule}
+            Módulo activo: {moduleUrl}
           </span>
         )}
       </div>
@@ -120,4 +121,3 @@ export default function Navbar({ title = 'Portal Institucional', user, onLogout,
     </header>
   );
 }
-
