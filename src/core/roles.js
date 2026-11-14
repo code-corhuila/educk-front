@@ -1,4 +1,3 @@
-// educk-front/src/core/roles.js
 // Fuente única de verdad para roles. El JWT trae ADMIN / TEACHER / PARENT / STUDENT;
 // la interfaz trabaja con DIRECTIVO / DOCENTE / ACUDIENTE / ESTUDIANTE.
 
@@ -26,4 +25,3 @@ export function normalizeRole(role) {
   const key = typeof role === 'string' ? role.trim().toUpperCase() : '';
   return ROLE_ALIASES[key] ?? 'ACUDIENTE';
 }
-

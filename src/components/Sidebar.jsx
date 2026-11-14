@@ -89,4 +89,3 @@ export default function Sidebar({ role = 'ACUDIENTE', user, activePortalId, onSe
     </aside>
   );
 }
-
