@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { BookOpen, CalendarCheck, MessageSquare, Users } from 'lucide-react';
-import { normalizeRole } from '../core/roles';
+import { normalizeRole, ROLE_LABELS } from '../core/roles';
 
 const ROLE_CONTEXT_CARD = {
   ACUDIENTE: { badge: 'Estudiante matriculado', name: 'Juan Sebastián López', detail: 'Grado 10°A · Promedio 4.4' },
@@ -48,21 +48,53 @@ export function getRoleMenuItems(role = 'ACUDIENTE') {
   ];
 }
 
-export default function Sidebar({ role = 'ACUDIENTE', user, activePortalId, onSelectPortal }) {
+function getInitials(name) {
+  if (!name) return 'ET';
+  const parts = name.trim().split(/\s+/);
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}
+
+export default function Sidebar({ role = 'ACUDIENTE', user, activePortalId, onSelectPortal, onLogout }) {
   const normalizedRole = normalizeRole(role);
   const context = ROLE_CONTEXT_CARD[normalizedRole];
-  const displayName = normalizedRole === 'ACUDIENTE' ? context.name : (user?.name || user?.nombre || context.name);
+  const displayName = normalizedRole === 'ACUDIENTE' ? (user?.name || user?.nombre || 'María López') : (user?.name || user?.nombre || context.name);
   const items = getRoleMenuItems(normalizedRole);
+  const [showMenu, setShowMenu] = useState(false);
+  const menuRef = useRef(null);
+
+  useEffect(() => {
+    if (!showMenu) return undefined;
+    const onDown = (e) => { if (menuRef.current && !menuRef.current.contains(e.target)) setShowMenu(false); };
+    const onKey = (e) => { if (e.key === 'Escape') setShowMenu(false); };
+    document.addEventListener('mousedown', onDown);
+    document.addEventListener('keydown', onKey);
+    return () => { document.removeEventListener('mousedown', onDown); document.removeEventListener('keydown', onKey); };
+  }, [showMenu]);
 
   return (
     <aside className="shell-sidebar" aria-label="Menú institucional de EduTrack">
-      <div className="mb-4 rounded-xl border border-slate-400/20 bg-slate-800/70 px-3.5 py-3">
-        <div className="text-[10px] font-extrabold uppercase tracking-[0.08em] text-sky-400">{context.badge}</div>
-        <div className="mt-1 text-sm font-bold text-white">{displayName}</div>
-        <div className="mt-0.5 text-xs text-slate-400">{context.detail}</div>
+      <div className="shell-brand">Edu<span>Track</span></div>
+
+      <div className="shell-user" ref={menuRef}>
+        <button type="button" className="shell-user__card" aria-haspopup="menu" aria-expanded={showMenu} onClick={() => setShowMenu((o) => !o)}>
+          <span className="shell-user__avatar">{getInitials(displayName)}</span>
+          <span className="shell-user__text">
+            <strong>{displayName}</strong>
+            <small>{ROLE_LABELS[normalizedRole]} · Colegio EduTrack</small>
+          </span>
+          <span aria-hidden="true" className="shell-user__chevron">⌄</span>
+        </button>
+        {showMenu && (
+          <div role="menu" className="shell-user__menu">
+            {user?.email && <div className="shell-user__email">{user.email}</div>}
+            <button type="button" role="menuitem" onClick={() => { setShowMenu(false); if (typeof onLogout === 'function') onLogout(); }}>
+              Cerrar sesión
+            </button>
+          </div>
+        )}
       </div>
 
-      <p className="shell-sidebar__label">Menú de navegación</p>
       <ul className="shell-sidebar__list">
         {items.map((item) => {
           const Icon = item.icon;
@@ -74,13 +106,11 @@ export default function Sidebar({ role = 'ACUDIENTE', user, activePortalId, onSe
                 type="button"
                 className={`shell-sidebar__button${isActive ? ' is-active' : ''}`}
                 aria-current={isActive ? 'page' : undefined}
+                title={item.subtitle}
                 onClick={() => onSelectPortal(item.navId)}
               >
-                <Icon aria-hidden="true" size={19} />
-                <span>
-                  <strong>{item.title}</strong>
-                  <small>{item.subtitle}</small>
-                </span>
+                <Icon aria-hidden="true" size={18} />
+                <span>{item.title}</span>
               </button>
             </li>
           );
